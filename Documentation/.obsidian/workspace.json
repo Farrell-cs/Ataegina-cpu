@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "RISC-V CPU development.md",
+                "file": "Research/Components.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "RISC-V CPU development"
+              "title": "Components"
             }
           }
         ],
@@ -218,20 +218,22 @@
   },
   "active": "eb66982e8767577e",
   "lastOpenFiles": [
+    "Research/Computer-Organization-and-Design-The-Hardware-Software-Interface-RISC-V-Edition.pdf",
+    "Pasted image 20261021202412.png",
+    "RISC-V CPU development.md",
+    "Pasted image 20261021202348.png",
     "Welcome.md",
     "Specifications/Instruction Format.md",
     "Specifications/Instructions List.md",
     "Pasted image 20261021162623.png",
     "Pasted image 20261021162230.png",
     "Pasted image 20261021162222.png",
-    "RISC-V CPU development.md",
     "Specifications",
     "Pasted image 20261021161612.png",
     "Pasted image 20261021161544.png",
     "Pasted image 20261021161607.png",
     "Pasted image 20261021161543.png",
     "Pasted image 20261020225108.png",
-    "Pasted image 20261020225100.png",
     "Research/Components.md",
     "Yap/Notes.md",
     "Yap",

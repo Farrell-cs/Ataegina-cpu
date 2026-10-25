@@ -1,5 +1,6 @@
 Okay first of all it's 20th of October 2026, around 7 days after my 18th birthday, I have ZERO, NADA, NOL clue what I'm doing right now. All I know is that I'm motivated to larp my way out of unemployment.
 
+![[Pasted image 20261021202348.png]]
 ## GOALS
 - Be able to compile and run C programs
 - Be able to run PONG
