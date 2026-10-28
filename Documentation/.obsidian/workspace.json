@@ -11,12 +11,14 @@
             "id": "d40e0198c20f7c6e",
             "type": "leaf",
             "state": {
-              "type": "pdf",
+              "type": "markdown",
               "state": {
-                "file": "Research/Computer-Organization-and-Design-The-Hardware-Software-Interface-RISC-V-Edition.pdf"
+                "file": "Specifications/Instruction Format.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-file-text",
-              "title": "Computer-Organization-and-Design-The-Hardware-Software-Interface-RISC-V-Edition"
+              "icon": "lucide-file",
+              "title": "Instruction Format"
             }
           },
           {
@@ -199,10 +201,10 @@
   },
   "active": "d40e0198c20f7c6e",
   "lastOpenFiles": [
-    "RISC-V CPU development.md",
-    "Research/Computer-Organization-and-Design-The-Hardware-Software-Interface-RISC-V-Edition.pdf",
-    "Specifications/Instruction Format.md",
     "Specifications/Instructions List.md",
+    "RISC-V CPU development.md",
+    "Specifications/Instruction Format.md",
+    "Research/Computer-Organization-and-Design-The-Hardware-Software-Interface-RISC-V-Edition.pdf",
     "Research/Components.md",
     "Pasted image 20261021202412.png",
     "Pasted image 20261021202348.png",
