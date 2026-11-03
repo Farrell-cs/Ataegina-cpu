@@ -8,13 +8,9 @@ package Constants is
     constant REG_ADDR_WIDTH : integer := 5;
     constant NUM_REGISTERS  : integer := 32;
 
-    -- Program Counter Control Codes
-    constant PC_OP_HALT   : std_logic_vector(1 downto 0) := "00";
-    constant PC_OP_INC    : std_logic_vector(1 downto 0) := "01";
-    constant PC_OP_ASSIGN : std_logic_vector(1 downto 0) := "10";
-    constant PC_OP_RESET  : std_logic_vector(1 downto 0) := "11";
+    function clog2(n : positive) return natural;
 
-    -- RV32I Base Major Opcodes (inst[6:0])
+    -- RV32I Major Opcodes (instruction[6:0])
     constant OP_LUI    : std_logic_vector(6 downto 0) := "0110111";
     constant OP_AUIPC  : std_logic_vector(6 downto 0) := "0010111";
     constant OP_JAL    : std_logic_vector(6 downto 0) := "1101111";
@@ -27,7 +23,14 @@ package Constants is
     constant OP_FENCE  : std_logic_vector(6 downto 0) := "0001111";
     constant OP_SYSTEM : std_logic_vector(6 downto 0) := "1110011";
 
-    -- RV32I ALU / Integer funct3 Codes (inst[14:12])
+    -- Main Control ALUOp Codes (Control -> ALU_Control)
+    constant ALUOP_LOAD_STORE : std_logic_vector(2 downto 0) := "000";
+    constant ALUOP_BRANCH     : std_logic_vector(2 downto 0) := "001";
+    constant ALUOP_R_TYPE     : std_logic_vector(2 downto 0) := "010";
+    constant ALUOP_I_TYPE     : std_logic_vector(2 downto 0) := "011";
+    constant ALUOP_LUI        : std_logic_vector(2 downto 0) := "100";
+
+    -- RV32I ALU funct3 Codes (instruction[14:12])
     constant F3_ADD_SUB : std_logic_vector(2 downto 0) := "000";
     constant F3_SLL     : std_logic_vector(2 downto 0) := "001";
     constant F3_SLT     : std_logic_vector(2 downto 0) := "010";
@@ -52,25 +55,32 @@ package Constants is
     constant F3_BYTE_U : std_logic_vector(2 downto 0) := "100";
     constant F3_HALF_U : std_logic_vector(2 downto 0) := "101";
 
-    -- RV32I funct7 Codes (inst[31:25])
-    constant F7_DEFAULT : std_logic_vector(6 downto 0) := "0000000";
-    constant F7_ALT     : std_logic_vector(6 downto 0) := "0100000";
-
-    -- Internal 4-bit ALU Operation Select Codes
-    constant ALU_ADD    : std_logic_vector(3 downto 0) := "0000";
-    constant ALU_SUB    : std_logic_vector(3 downto 0) := "0001";
-    constant ALU_SLL    : std_logic_vector(3 downto 0) := "0010";
-    constant ALU_SLT    : std_logic_vector(3 downto 0) := "0011";
-    constant ALU_SLTU   : std_logic_vector(3 downto 0) := "0100";
-    constant ALU_XOR    : std_logic_vector(3 downto 0) := "0101";
-    constant ALU_SRL    : std_logic_vector(3 downto 0) := "0110";
-    constant ALU_SRA    : std_logic_vector(3 downto 0) := "0111";
-    constant ALU_OR     : std_logic_vector(3 downto 0) := "1000";
-    constant ALU_AND    : std_logic_vector(3 downto 0) := "1001";
-    constant ALU_EQ     : std_logic_vector(3 downto 0) := "1010";
-    constant ALU_PASS_B : std_logic_vector(3 downto 0) := "1011";
+    -- 4-bit ALU Control Lines (ALU_Control -> ALU)
+    constant ALU_AND    : std_logic_vector(3 downto 0) := "0000";
+    constant ALU_OR     : std_logic_vector(3 downto 0) := "0001";
+    constant ALU_ADD    : std_logic_vector(3 downto 0) := "0010";
+    constant ALU_SLL    : std_logic_vector(3 downto 0) := "0011";
+    constant ALU_SLT    : std_logic_vector(3 downto 0) := "0100";
+    constant ALU_SLTU   : std_logic_vector(3 downto 0) := "0101";
+    constant ALU_SUB    : std_logic_vector(3 downto 0) := "0110";
+    constant ALU_XOR    : std_logic_vector(3 downto 0) := "0111";
+    constant ALU_SRL    : std_logic_vector(3 downto 0) := "1000";
+    constant ALU_SRA    : std_logic_vector(3 downto 0) := "1001";
+    constant ALU_PASS_B : std_logic_vector(3 downto 0) := "1010";
 
 end package Constants;
 
 package body Constants is
+
+    function clog2(n : positive) return natural is
+        variable res : natural := 0;
+        variable val : natural := n - 1;
+    begin
+        while val > 0 loop
+            val := val / 2;
+            res := res + 1;
+        end loop;
+        return res;
+    end function clog2;
+
 end package body Constants;

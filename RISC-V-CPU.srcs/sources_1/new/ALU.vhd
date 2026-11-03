@@ -5,78 +5,71 @@ use work.Constants.ALL;
 
 entity ALU is
     port(
-        A        : in  std_logic_vector(WORD_WIDTH - 1 downto 0);
-        B        : in  std_logic_vector(WORD_WIDTH - 1 downto 0);
-        opcode   : in  std_logic_vector(3 downto 0);
-        zero     : out std_logic;
-        ALU_Out  : out std_logic_vector(WORD_WIDTH - 1 downto 0)
+        in_1       : in  std_logic_vector(WORD_WIDTH - 1 downto 0);
+        in_2       : in  std_logic_vector(WORD_WIDTH - 1 downto 0);
+        alu_ctrl   : in  std_logic_vector(3 downto 0);
+        zero       : out std_logic;
+        alu_result : out std_logic_vector(WORD_WIDTH - 1 downto 0)
     );
 end entity ALU;
 
 architecture Behavioral of ALU is
-    signal alu_result : std_logic_vector(WORD_WIDTH - 1 downto 0);
+    signal result_s : std_logic_vector(WORD_WIDTH - 1 downto 0);
 begin
 
-    process(A, B, opcode)
+    process(in_1, in_2, alu_ctrl)
         variable shift_amt : natural range 0 to 31;
     begin
-        shift_amt := to_integer(unsigned(B(4 downto 0)));
+        shift_amt := to_integer(unsigned(in_2(4 downto 0)));
 
-        case opcode is
+        case alu_ctrl is
+            when ALU_AND =>
+                result_s <= in_1 and in_2;
+
+            when ALU_OR =>
+                result_s <= in_1 or in_2;
+
             when ALU_ADD =>
-                alu_result <= std_logic_vector(unsigned(A) + unsigned(B));
+                result_s <= std_logic_vector(unsigned(in_1) + unsigned(in_2));
 
             when ALU_SUB =>
-                alu_result <= std_logic_vector(unsigned(A) - unsigned(B));
+                result_s <= std_logic_vector(unsigned(in_1) - unsigned(in_2));
 
             when ALU_SLL =>
-                alu_result <= std_logic_vector(shift_left(unsigned(A), shift_amt));
+                result_s <= std_logic_vector(shift_left(unsigned(in_1), shift_amt));
 
             when ALU_SLT =>
-                if signed(A) < signed(B) then
-                    alu_result <= (0 => '1', others => '0');
+                if signed(in_1) < signed(in_2) then
+                    result_s <= (0 => '1', others => '0');
                 else
-                    alu_result <= (others => '0');
+                    result_s <= (others => '0');
                 end if;
 
             when ALU_SLTU =>
-                if unsigned(A) < unsigned(B) then
-                    alu_result <= (0 => '1', others => '0');
+                if unsigned(in_1) < unsigned(in_2) then
+                    result_s <= (0 => '1', others => '0');
                 else
-                    alu_result <= (others => '0');
+                    result_s <= (others => '0');
                 end if;
 
             when ALU_XOR =>
-                alu_result <= A xor B;
+                result_s <= in_1 xor in_2;
 
             when ALU_SRL =>
-                alu_result <= std_logic_vector(shift_right(unsigned(A), shift_amt));
+                result_s <= std_logic_vector(shift_right(unsigned(in_1), shift_amt));
 
             when ALU_SRA =>
-                alu_result <= std_logic_vector(shift_right(signed(A), shift_amt));
-
-            when ALU_OR =>
-                alu_result <= A or B;
-
-            when ALU_AND =>
-                alu_result <= A and B;
-
-            when ALU_EQ =>
-                if A = B then
-                    alu_result <= (0 => '1', others => '0');
-                else
-                    alu_result <= (others => '0');
-                end if;
+                result_s <= std_logic_vector(shift_right(signed(in_1), shift_amt));
 
             when ALU_PASS_B =>
-                alu_result <= B;
+                result_s <= in_2;
 
             when others =>
-                alu_result <= (others => '0');
+                result_s <= (others => '0');
         end case;
     end process;
 
-    zero    <= '1' when alu_result = X"00000000" else '0';
-    ALU_Out <= alu_result;
+    zero       <= '1' when result_s = X"00000000" else '0';
+    alu_result <= result_s;
 
 end Behavioral;

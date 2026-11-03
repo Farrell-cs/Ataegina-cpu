@@ -27,15 +27,16 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "RISC-V CPU development.md",
+                "file": "Learning/Course Index.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "RISC-V CPU development"
+              "title": "Course Index"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -199,26 +200,30 @@
       "bases:Create new base": false
     }
   },
-  "active": "d40e0198c20f7c6e",
+  "active": "4dfabd777d432028",
   "lastOpenFiles": [
-    "Specifications/Instructions List.md",
+    "Learning/M0 - The Big Picture.md",
+    "Yap/TekTok logs.md",
     "RISC-V CPU development.md",
-    "Specifications/Instruction Format.md",
-    "Research/Computer-Organization-and-Design-The-Hardware-Software-Interface-RISC-V-Edition.pdf",
-    "Research/Components.md",
+    "Learning/Course Index.md",
+    "Learning",
+    "Yap/Notes.md",
     "Pasted image 20261021202412.png",
     "Pasted image 20261021202348.png",
+    "Pasted image 20261020225100.png",
+    "Specifications/Instruction Format.md",
+    "Specifications/Instructions List.md",
+    "Research/Computer-Organization-and-Design-The-Hardware-Software-Interface-RISC-V-Edition.pdf",
+    "Research/Components.md",
     "Pasted image 20261021162623.png",
     "Pasted image 20261021162230.png",
     "Pasted image 20261021162222.png",
     "Pasted image 20261021161544.png",
     "Pasted image 20261021161543.png",
     "Pasted image 20261020225108.png",
-    "Pasted image 20261020225100.png",
     "Welcome.md",
     "Specifications",
     "Pasted image 20261021161612.png",
-    "Yap/Notes.md",
     "Yap",
     "Research"
   ]
