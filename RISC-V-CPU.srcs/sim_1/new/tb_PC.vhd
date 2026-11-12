@@ -41,11 +41,11 @@ begin
         rst   <= '0';
         pc_in <= X"00000004";
         wait for CLK_PERIOD;
-        assert pc_out = X"00000004" report "PC latch +4 failed" severity error;
+        assert pc_out = X"00000004" report "PC latch mismatch" severity error;
 
-        pc_in <= X"00000041"; -- LSB must be masked to 0
+        pc_in <= X"00000041";
         wait for CLK_PERIOD;
-        assert pc_out = X"00000040" report "PC alignment mask failed" severity error;
+        assert pc_out = X"00000040" report "PC align mismatch" severity error;
 
         report "tb_PC passed successfully." severity note;
         wait;

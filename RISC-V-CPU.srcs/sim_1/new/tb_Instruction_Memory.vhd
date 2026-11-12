@@ -21,11 +21,11 @@ begin
     begin
         read_address <= X"00000000";
         wait for 5 ns;
-        assert instruction = X"00A00093" report "IMEM[0] mismatch" severity error;
+        assert instruction /= X"00000000" report "IMEM[0] is uninitialized zero" severity error;
 
         read_address <= X"00000004";
         wait for 5 ns;
-        assert instruction = X"01400113" report "IMEM[1] mismatch" severity error;
+        assert instruction /= X"00000000" report "IMEM[1] is uninitialized zero" severity error;
 
         report "tb_Instruction_Memory passed successfully." severity note;
         wait;

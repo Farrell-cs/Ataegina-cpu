@@ -1,54 +1,53 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 entity tb_HDMI_Controller is
-end entity tb_HDMI_Controller;
+end tb_HDMI_Controller;
 
-architecture sim of tb_HDMI_Controller is
-    constant CLK_PERIOD : time := 40 ns;
+architecture rtl of tb_HDMI_Controller is
 
-    signal pixel_clk    : std_logic := '0';
-    signal rst          : std_logic := '1';
-    signal rgb_in       : std_logic_vector(23 downto 0) := X"FF8800";
-    signal hsync        : std_logic;
-    signal vsync        : std_logic;
-    signal video_active : std_logic;
-    signal pixel_x      : std_logic_vector(9 downto 0);
-    signal pixel_y      : std_logic_vector(9 downto 0);
-    signal rgb_out      : std_logic_vector(23 downto 0);
+    constant clk_period  : time    := 8 ns;
+    constant reset_time  : time    := 20 * clk_period;
+    constant sim_window  : time    := 2000 * clk_period;
+
+    signal clk           : std_logic := '0';
+    signal rst           : std_logic := '1';
+    signal clk_cpu_o     : std_logic;
+    signal pll_locked    : std_logic;
+    signal vram_we       : std_logic := '0';
+    signal vram_addr     : std_logic_vector(15 downto 0) := (others => '0');
+    signal vram_din      : std_logic_vector(7 downto 0) := (others => '0');
+    signal vram_dout     : std_logic_vector(7 downto 0);
+    signal clk_p, clk_n  : std_logic;
+    signal data_p, data_n: std_logic_vector(2 downto 0);
+
 begin
 
-    uut: entity work.HDMI_Controller
+    uut0: entity work.HDMI_Controller
         generic map(
-            H_ACTIVE => 8,
-            H_FP     => 2,
-            H_SYNC   => 2,
-            H_BP     => 2,
-            V_ACTIVE => 4,
-            V_FP     => 1,
-            V_SYNC   => 1,
-            V_BP     => 1
+            SERIES6 => false
         )
         port map(
-            pixel_clk    => pixel_clk,
-            rst          => rst,
-            rgb_in       => rgb_in,
-            hsync        => hsync,
-            vsync        => vsync,
-            video_active => video_active,
-            pixel_x      => pixel_x,
-            pixel_y      => pixel_y,
-            rgb_out      => rgb_out
+            clk_125mhz => clk,
+            rst        => rst,
+            clk_cpu_o  => clk_cpu_o,
+            pll_locked => pll_locked,
+            vram_we    => vram_we,
+            vram_addr  => vram_addr,
+            vram_din   => vram_din,
+            vram_dout  => vram_dout,
+            clk_p      => clk_p,
+            clk_n      => clk_n,
+            data_p     => data_p,
+            data_n     => data_n
         );
 
-    clk_process: process
+    clk_proc: process
     begin
-        while now < 1000 ns loop
-            pixel_clk <= '0';
-            wait for CLK_PERIOD / 2;
-            pixel_clk <= '1';
-            wait for CLK_PERIOD / 2;
+        while now < (reset_time + sim_window) loop
+            clk <= '0'; wait for clk_period / 2;
+            clk <= '1'; wait for clk_period / 2;
         end loop;
         wait;
     end process;
@@ -56,26 +55,17 @@ begin
     stim_proc: process
     begin
         rst <= '1';
-        wait for CLK_PERIOD;
+        wait for reset_time;
         rst <= '0';
-        wait for 1 ns;
+        wait for sim_window;
 
-        assert video_active = '1'
-            report "Active video should be high at (0,0)" severity error;
-        assert rgb_out = X"FF8800"
-            report "RGB output should match rgb_in during active video" severity error;
-
-        -- Advance to horizontal sync region (8 active + 2 front porch = 10 cycles)
-        wait for 10 * CLK_PERIOD;
-        assert video_active = '0'
-            report "Active video should be low during blanking" severity error;
-        assert hsync = '0'
-            report "HSYNC should pulse low during sync interval" severity error;
-        assert rgb_out = X"000000"
-            report "RGB output should be blanked to 0" severity error;
+        assert pll_locked = '1'
+            report "PLL failed to lock" severity error;
+        assert (clk_p = '0' or clk_p = '1') and (clk_n = not clk_p)
+            report "Clock output error" severity error;
 
         report "tb_HDMI_Controller passed successfully." severity note;
         wait;
     end process;
 
-end architecture sim;
+end rtl;

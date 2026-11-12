@@ -1,0 +1,130 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2026.1 (win64) Build 6511674 Tue Jun 16 11:02:23 MDT 2026
+| Date         : Fri Nov 13 01:23:39 2026
+| Host         : LAPTOP-4G2GLPK2 running 64-bit major release  (build 9200)
+| Command      : report_control_sets -verbose -file CPU_Top_control_sets_placed.rpt
+| Design       : CPU_Top
+| Device       : xc7z010
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Control Set Information
+
+Table of Contents
+-----------------
+1. Summary
+2. Histogram
+3. Flip-Flop Distribution
+4. Detailed Control Set Information
+
+1. Summary
+----------
+
++----------------------------------------------------------+-------+
+|                          Status                          | Count |
++----------------------------------------------------------+-------+
+| Total control sets                                       |    52 |
+|    Minimum number of control sets                        |    52 |
+|    Addition due to synthesis replication                 |     0 |
+|    Addition due to physical synthesis replication        |     0 |
+| Unused register locations in slices containing registers |    59 |
++----------------------------------------------------------+-------+
+* Control sets can be merged at opt_design using control_set_merge or merge_equivalent_drivers
+** Run report_qor_suggestions for automated merging and remapping suggestions
+
+
+2. Histogram
+------------
+
++--------------------+-------+
+|       Fanout       | Count |
++--------------------+-------+
+| Total control sets |    52 |
+| >= 0 to < 4        |     2 |
+| >= 4 to < 6        |     3 |
+| >= 6 to < 8        |     0 |
+| >= 8 to < 10       |     6 |
+| >= 10 to < 12      |     1 |
+| >= 12 to < 14      |     0 |
+| >= 14 to < 16      |     1 |
+| >= 16              |    39 |
++--------------------+-------+
+* Control sets can be remapped at either synth_design or opt_design
+
+
+3. Flip-Flop Distribution
+-------------------------
+
++--------------+-----------------------+------------------------+-----------------+--------------+
+| Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
++--------------+-----------------------+------------------------+-----------------+--------------+
+| No           | No                    | No                     |             117 |           34 |
+| No           | No                    | Yes                    |               4 |            2 |
+| No           | Yes                   | No                     |             116 |           54 |
+| Yes          | No                    | No                     |              42 |           19 |
+| Yes          | No                    | Yes                    |               0 |            0 |
+| Yes          | Yes                   | No                     |              62 |           20 |
++--------------+-----------------------+------------------------+-----------------+--------------+
+
+
+4. Detailed Control Set Information
+-----------------------------------
+
++----------------------+-------------------------------------+---------------------------------------------------------------------+------------------+----------------+--------------+
+|     Clock Signal     |            Enable Signal            |                           Set/Reset Signal                          | Slice Load Count | Bel Load Count | Bels / Slice |
++----------------------+-------------------------------------+---------------------------------------------------------------------+------------------+----------------+--------------+
+|  u_hdmi/clock/clk1_o |                                     | u_hdmi/clock/AS[0]                                                  |                1 |              2 |         2.00 |
+|  u_hdmi/clock/clk2_o |                                     | u_hdmi/clock/AS[0]                                                  |                1 |              2 |         2.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/rx_valid_reg_n_0      | rst_IBUF                                                            |                1 |              4 |         4.00 |
+|  u_hdmi/clock/clk1_o |                                     | u_hdmi/timing/hcount_reg[8]_0                                       |                2 |              5 |         2.50 |
+|  u_hdmi/clock/clk2_o |                                     | rst_IBUF                                                            |                2 |              5 |         2.50 |
+|  u_hdmi/clock/clk1_o |                                     | u_hdmi/u_rgb2dvi/DataEncoders[0].DataEncoder/active_s3_reg          |                3 |              8 |         2.67 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/word_buf[7]_i_1_n_0   | rst_IBUF                                                            |                3 |              8 |         2.67 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/word_buf[23]_i_1_n_0  | rst_IBUF                                                            |                1 |              8 |         8.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/word_buf[15]_i_1_n_0  | rst_IBUF                                                            |                4 |              8 |         2.00 |
+|  u_hdmi/clock/clk1_o |                                     | u_hdmi/u_rgb2dvi/DataEncoders[0].DataEncoder/pDataOutRaw[9]_i_1_n_0 |                3 |              9 |         3.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/rx_clk_cnt[0]         | rst_IBUF                                                            |                4 |              9 |         2.25 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/word_addr[11]_i_1_n_0 | rst_IBUF                                                            |                3 |             10 |         3.33 |
+|  u_hdmi/clock/clk1_o | u_hdmi/timing/vcount_0[0]           | u_hdmi/timing/vcount[15]_i_1_n_0                                    |                4 |             15 |         3.75 |
+|  u_hdmi/clock/clk1_o |                                     | u_hdmi/timing/vcount_0[0]                                           |                5 |             16 |         3.20 |
+|  u_hdmi/clock/clk1_o |                                     | u_hdmi/u_rgb2dvi/DataEncoders[0].DataEncoder/SR[0]                  |               11 |             32 |         2.91 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_24_24_i_4_1    |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_0_0_i_13_3     |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_0_0_i_13_0     |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_0_0_i_13_1     |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_0_0_i_13_2     |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_8_8_i_8_0      |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_16_16_i_4_2    |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_16_16_i_4_0    |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_24_24_i_4_2    |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_8_8_i_8_3      |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_16_16_i_4_3    |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_16_16_i_4_1    |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_8_8_i_8_1      |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_8_8_i_8_2      |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_24_24_i_4_0    |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_imem/ram_reg_0_255_24_24_i_4_3    |                                                                     |                8 |             32 |         4.00 |
+|  u_hdmi/clock/clk2_o |                                     | u_uart_loader/SR[0]                                                 |               28 |             41 |         1.46 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_addr[11]_i_1_n_0 |                                                                     |               19 |             42 |         2.21 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_addr_reg[11]_0   |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_addr_reg[11]_1   |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_addr_reg[8]_0    |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_addr_reg[11]_3   |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_we_reg_1         |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_addr_reg[9]_0    |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_we_reg_0         |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_we_reg_4         |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_addr_reg[10]_0   |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_we_reg_2         |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_we_reg_5         |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_addr_reg[9]_1    |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_addr_reg[11]_2   |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_we_reg_3         |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_addr_reg[10]_1   |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o | u_uart_loader/imem_addr_reg[10]_2   |                                                                     |               11 |             44 |         4.00 |
+|  u_hdmi/clock/clk2_o |                                     |                                                                     |               15 |             46 |         3.07 |
+|  u_hdmi/clock/clk1_o |                                     |                                                                     |               19 |             73 |         3.84 |
+|  u_hdmi/clock/clk2_o | u_imem/p_0_in4_out                  |                                                                     |               11 |             88 |         8.00 |
++----------------------+-------------------------------------+---------------------------------------------------------------------+------------------+----------------+--------------+
+
+

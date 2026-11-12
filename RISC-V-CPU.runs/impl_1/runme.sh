@@ -25,7 +25,7 @@ else
 fi
 export LD_LIBRARY_PATH
 
-HD_PWD='C:/Users/Farrell/Documents/Kuliah S1/Semester 3/PSD-DSD/RISC-V-CPU/RISC-V-CPU.runs/impl_1'
+HD_PWD='C:/Users/Farrell/Documents/Kuliah-S1/Semester 3/PSD-DSD/RISC-V-CPU/RISC-V-CPU.runs/impl_1'
 cd "$HD_PWD"
 
 HD_LOG=runme.log

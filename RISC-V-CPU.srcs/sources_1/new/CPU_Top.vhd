@@ -9,25 +9,31 @@ entity CPU_Top is
         DMEM_WORDS : integer := 1024
     );
     port(
-        clk             : in  std_logic;
-        rst             : in  std_logic;
-        pc_out_dbg      : out std_logic_vector(WORD_WIDTH - 1 downto 0);
-        instruction_dbg : out std_logic_vector(WORD_WIDTH - 1 downto 0);
-        alu_result_dbg  : out std_logic_vector(WORD_WIDTH - 1 downto 0);
-        write_data_dbg  : out std_logic_vector(WORD_WIDTH - 1 downto 0)
+        clk         : in  std_logic;
+        rst         : in  std_logic;
+        btn         : in  std_logic_vector(2 downto 0) := "000";
+        uart_rx     : in  std_logic := '1';
+        led         : out std_logic_vector(3 downto 0);
+        hdmi_clk_p  : out std_logic;
+        hdmi_clk_n  : out std_logic;
+        hdmi_data_p : out std_logic_vector(2 downto 0);
+        hdmi_data_n : out std_logic_vector(2 downto 0)
     );
 end entity CPU_Top;
 
 architecture Structural of CPU_Top is
 
-    -- Fetch wires
+    signal cpu_clk       : std_logic;
+    signal pll_locked    : std_logic;
+    signal cpu_rst       : std_logic;
+    signal rst_sync      : std_logic_vector(1 downto 0) := "11";
+
     signal pc_in         : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal pc_out        : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal pc_plus_4     : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal const_four    : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal instruction   : std_logic_vector(WORD_WIDTH - 1 downto 0);
 
-    -- Sliced instruction fields (Figure 4.17 black bus splits)
     signal opcode        : std_logic_vector(6 downto 0);
     signal read_reg_1    : std_logic_vector(REG_ADDR_WIDTH - 1 downto 0);
     signal read_reg_2    : std_logic_vector(REG_ADDR_WIDTH - 1 downto 0);
@@ -35,7 +41,6 @@ architecture Structural of CPU_Top is
     signal funct3        : std_logic_vector(2 downto 0);
     signal funct7_b5     : std_logic;
 
-    -- Control lines (Figure 4.17 blue lines)
     signal branch        : std_logic;
     signal mem_read      : std_logic;
     signal mem_to_reg    : std_logic;
@@ -47,40 +52,77 @@ architecture Structural of CPU_Top is
     signal jalr          : std_logic;
     signal auipc         : std_logic;
 
-    -- Register File & Immediate Generator wires
     signal read_data_1   : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal read_data_2   : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal imm_out       : std_logic_vector(WORD_WIDTH - 1 downto 0);
 
-    -- ALU & ALU Control wires
     signal alu_in_1      : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal alu_in_2      : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal alu_ctrl      : std_logic_vector(3 downto 0);
     signal alu_result    : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal zero          : std_logic;
 
-    -- Branch / Jump Target Adder & PCSrc Mux wires
     signal jump_base     : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal branch_target : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal pc_src        : std_logic;
 
-    -- Data Memory & Writeback Mux wires
-    signal read_data     : std_logic_vector(WORD_WIDTH - 1 downto 0);
-    signal mem_or_alu    : std_logic_vector(WORD_WIDTH - 1 downto 0);
-    signal write_data    : std_logic_vector(WORD_WIDTH - 1 downto 0);
+    signal dmem_write     : std_logic;
+    signal dmem_read      : std_logic;
+    signal dmem_read_data : std_logic_vector(WORD_WIDTH - 1 downto 0);
+    signal read_data      : std_logic_vector(WORD_WIDTH - 1 downto 0);
+    signal mem_or_alu     : std_logic_vector(WORD_WIDTH - 1 downto 0);
+    signal write_data     : std_logic_vector(WORD_WIDTH - 1 downto 0);
+
+    signal vram_we       : std_logic;
+    signal vram_addr     : std_logic_vector(15 downto 0);
+    signal vram_din      : std_logic_vector(7 downto 0);
+    signal vram_dout     : std_logic_vector(7 downto 0);
+
+    signal btn_meta      : std_logic_vector(2 downto 0) := "000";
+    signal btn_sync      : std_logic_vector(2 downto 0) := "000";
+
+    signal loader_active : std_logic := '0';
+    signal loader_we     : std_logic := '0';
+    signal loader_addr   : std_logic_vector(31 downto 0) := (others => '0');
+    signal loader_wdata  : std_logic_vector(31 downto 0) := (others => '0');
+    signal heartbeat_cnt : unsigned(25 downto 0) := (others => '0');
 
 begin
 
-    -- 1. PC Register
+    -- Hold CPU in reset until PLL locks and rst button is released
+    process(cpu_clk, pll_locked, rst)
+    begin
+        if pll_locked = '0' or rst = '1' then
+            rst_sync <= "11";
+        elsif rising_edge(cpu_clk) then
+            rst_sync <= rst_sync(0) & '0';
+        end if;
+    end process;
+    cpu_rst <= rst_sync(1) or loader_active;
+
+    u_uart_loader: entity work.UART_Program_Loader
+        generic map(
+            CLK_FREQ_HZ => 36875000,
+            BAUD_RATE   => 115200
+        )
+        port map(
+            clk           => cpu_clk,
+            rst           => rst,
+            rx            => uart_rx,
+            loader_active => loader_active,
+            imem_we       => loader_we,
+            imem_addr     => loader_addr,
+            imem_wdata    => loader_wdata
+        );
+
     u_pc: entity work.PC
         port map(
-            clk    => clk,
-            rst    => rst,
+            clk    => cpu_clk,
+            rst    => cpu_rst,
             pc_in  => pc_in,
             pc_out => pc_out
         );
 
-    -- 2. Add (PC + 4)
     u_add_pc_4: entity work.Adder
         port map(
             in_a => pc_out,
@@ -88,30 +130,27 @@ begin
             sum  => pc_plus_4
         );
 
-    -- 3. Instruction Memory
     u_imem: entity work.Instruction_Memory
         generic map(
             IMEM_WORDS => IMEM_WORDS
         )
         port map(
-            read_address => pc_out,
-            instruction  => instruction
+            clk           => cpu_clk,
+            write_en      => loader_we,
+            write_address => loader_addr,
+            write_data    => loader_wdata,
+            read_address  => pc_out,
+            instruction   => instruction
         );
 
-    -- 4. Instruction Bus Slicer (Instruction[6:0], [19:15], [24:20], [11:7], [30,14:12])
-    u_slicer: entity work.Instruction_Slicer
-        port map(
-            instruction => instruction,
-            opcode      => opcode,
-            read_reg_1  => read_reg_1,
-            read_reg_2  => read_reg_2,
-            write_reg   => write_reg,
-            funct3      => funct3,
-            funct7_b5   => funct7_b5,
-            const_four  => const_four
-        );
+    opcode     <= instruction(6 downto 0);
+    write_reg  <= instruction(11 downto 7);
+    funct3     <= instruction(14 downto 12);
+    read_reg_1 <= instruction(19 downto 15);
+    read_reg_2 <= instruction(24 downto 20);
+    funct7_b5  <= instruction(30);
+    const_four <= X"00000004";
 
-    -- 5. Control Unit
     u_control: entity work.Control
         port map(
             opcode     => opcode,
@@ -127,11 +166,10 @@ begin
             auipc      => auipc
         );
 
-    -- 6. Registers
     u_registers: entity work.Registers
         port map(
-            clk         => clk,
-            rst         => rst,
+            clk         => cpu_clk,
+            rst         => cpu_rst,
             reg_write   => reg_write,
             read_reg_1  => read_reg_1,
             read_reg_2  => read_reg_2,
@@ -141,14 +179,12 @@ begin
             read_data_2 => read_data_2
         );
 
-    -- 7. Immediate Generator (Imm Gen)
     u_imm_gen: entity work.Imm_Gen
         port map(
             instruction => instruction,
             imm_out     => imm_out
         );
 
-    -- 8. ALU Input Muxes (ALUSrc Mux from Fig 4.17 + AUIPC support)
     u_mux_alu_a: entity work.Mux2
         port map(
             in_0    => read_data_1,
@@ -165,7 +201,6 @@ begin
             mux_out => alu_in_2
         );
 
-    -- 9. ALU Control
     u_alu_control: entity work.ALU_Control
         port map(
             alu_op    => alu_op,
@@ -174,7 +209,6 @@ begin
             alu_ctrl  => alu_ctrl
         );
 
-    -- 10. ALU
     u_alu: entity work.ALU
         port map(
             in_1       => alu_in_1,
@@ -184,7 +218,6 @@ begin
             alu_result => alu_result
         );
 
-    -- 11. Branch / Jump Target Adder & AND Gate + PCSrc Mux
     u_mux_jump_base: entity work.Mux2
         port map(
             in_0    => pc_out,
@@ -217,23 +250,68 @@ begin
             mux_out => pc_in
         );
 
-    -- 12. Data Memory
+    dmem_write <= mem_write when alu_result(31) = '0' else '0';
+    dmem_read  <= mem_read  when alu_result(31) = '0' else '0';
+
+    vram_we   <= mem_write when (alu_result(31) = '1' and alu_result(16) = '0' and cpu_rst = '0') else '0';
+    vram_addr <= alu_result(15 downto 0);
+    vram_din  <= read_data_2(7 downto 0);
+
+    process(cpu_clk)
+    begin
+        if rising_edge(cpu_clk) then
+            btn_meta <= btn;
+            btn_sync <= btn_meta;
+        end if;
+    end process;
+
+    process(alu_result, dmem_read_data, vram_dout, btn_sync)
+    begin
+        if alu_result(31) = '1' then
+            if alu_result(16) = '1' then
+                read_data <= X"0000000" & '0' & btn_sync;
+            else
+                read_data <= X"000000" & vram_dout;
+            end if;
+        else
+            read_data <= dmem_read_data;
+        end if;
+    end process;
+
     u_dmem: entity work.Data_Memory
         generic map(
             DMEM_WORDS => DMEM_WORDS
         )
         port map(
-            clk        => clk,
-            rst        => rst,
-            mem_read   => mem_read,
-            mem_write  => mem_write,
+            clk        => cpu_clk,
+            rst        => cpu_rst,
+            mem_read   => dmem_read,
+            mem_write  => dmem_write,
             funct3     => funct3,
             address    => alu_result,
             write_data => read_data_2,
-            read_data  => read_data
+            read_data  => dmem_read_data
         );
 
-    -- 13. MemtoReg Writeback Muxes
+    u_hdmi: entity work.HDMI_Controller
+        generic map(
+            SERIES6 => false
+        )
+        port map(
+            clk_125mhz => clk,
+            rst        => rst,
+            clk_cpu_o  => cpu_clk,
+            pll_locked => pll_locked,
+            vram_we    => vram_we,
+            vram_addr  => vram_addr,
+            vram_din   => vram_din,
+            vram_dout  => vram_dout,
+            clk_p      => hdmi_clk_p,
+            clk_n      => hdmi_clk_n,
+            data_p     => hdmi_data_p,
+            data_n     => hdmi_data_n
+        );
+
     u_mux_mem_to_reg: entity work.Mux2
         port map(
             in_0    => alu_result,
@@ -250,10 +328,16 @@ begin
             mux_out => write_data
         );
 
-    -- Simulation debug probes
-    pc_out_dbg      <= pc_out;
-    instruction_dbg <= instruction;
-    alu_result_dbg  <= alu_result;
-    write_data_dbg  <= write_data;
+    process(cpu_clk)
+    begin
+        if rising_edge(cpu_clk) then
+            heartbeat_cnt <= heartbeat_cnt + 1;
+        end if;
+    end process;
+
+    led(0) <= pll_locked;
+    led(1) <= heartbeat_cnt(24);
+    led(2) <= vram_we;
+    led(3) <= btn_sync(0) or btn_sync(1) or btn_sync(2);
 
 end architecture Structural;

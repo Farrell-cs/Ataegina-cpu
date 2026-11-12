@@ -10,7 +10,6 @@ package Constants is
 
     function clog2(n : positive) return natural;
 
-    -- RV32I Major Opcodes (instruction[6:0])
     constant OP_LUI    : std_logic_vector(6 downto 0) := "0110111";
     constant OP_AUIPC  : std_logic_vector(6 downto 0) := "0010111";
     constant OP_JAL    : std_logic_vector(6 downto 0) := "1101111";
@@ -23,14 +22,12 @@ package Constants is
     constant OP_FENCE  : std_logic_vector(6 downto 0) := "0001111";
     constant OP_SYSTEM : std_logic_vector(6 downto 0) := "1110011";
 
-    -- Main Control ALUOp Codes (Control -> ALU_Control)
     constant ALUOP_LOAD_STORE : std_logic_vector(2 downto 0) := "000";
     constant ALUOP_BRANCH     : std_logic_vector(2 downto 0) := "001";
     constant ALUOP_R_TYPE     : std_logic_vector(2 downto 0) := "010";
     constant ALUOP_I_TYPE     : std_logic_vector(2 downto 0) := "011";
     constant ALUOP_LUI        : std_logic_vector(2 downto 0) := "100";
 
-    -- RV32I ALU funct3 Codes (instruction[14:12])
     constant F3_ADD_SUB : std_logic_vector(2 downto 0) := "000";
     constant F3_SLL     : std_logic_vector(2 downto 0) := "001";
     constant F3_SLT     : std_logic_vector(2 downto 0) := "010";
@@ -40,7 +37,6 @@ package Constants is
     constant F3_OR      : std_logic_vector(2 downto 0) := "110";
     constant F3_AND     : std_logic_vector(2 downto 0) := "111";
 
-    -- RV32I Branch funct3 Codes
     constant F3_BEQ  : std_logic_vector(2 downto 0) := "000";
     constant F3_BNE  : std_logic_vector(2 downto 0) := "001";
     constant F3_BLT  : std_logic_vector(2 downto 0) := "100";
@@ -48,14 +44,12 @@ package Constants is
     constant F3_BLTU : std_logic_vector(2 downto 0) := "110";
     constant F3_BGEU : std_logic_vector(2 downto 0) := "111";
 
-    -- RV32I Load / Store Width funct3 Codes
     constant F3_BYTE   : std_logic_vector(2 downto 0) := "000";
     constant F3_HALF   : std_logic_vector(2 downto 0) := "001";
     constant F3_WORD   : std_logic_vector(2 downto 0) := "010";
     constant F3_BYTE_U : std_logic_vector(2 downto 0) := "100";
     constant F3_HALF_U : std_logic_vector(2 downto 0) := "101";
 
-    -- 4-bit ALU Control Lines (ALU_Control -> ALU)
     constant ALU_AND    : std_logic_vector(3 downto 0) := "0000";
     constant ALU_OR     : std_logic_vector(3 downto 0) := "0001";
     constant ALU_ADD    : std_logic_vector(3 downto 0) := "0010";

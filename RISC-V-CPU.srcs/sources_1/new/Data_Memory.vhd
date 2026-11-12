@@ -1,6 +1,8 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
+use std.textio.all;
+use ieee.std_logic_textio.all;
 use work.Constants.ALL;
 
 entity Data_Memory is
@@ -28,10 +30,29 @@ architecture Behavioral of Data_Memory is
     constant ADDR_BITS : natural := clog2(DMEM_WORDS);
     type ram_array is array (0 to DMEM_WORDS - 1) of std_logic_vector(WORD_WIDTH - 1 downto 0);
 
-    signal ram : ram_array := (others => (others => '0'));
+    impure function init_ram(file_name : string) return ram_array is
+        file mem_file        : text;
+        variable file_status : file_open_status;
+        variable l_buf       : line;
+        variable temp_ram    : ram_array := (others => (others => '0'));
+        variable h_val       : std_logic_vector(31 downto 0);
+    begin
+        file_open(file_status, mem_file, file_name, read_mode);
+        if file_status = open_ok then
+            for i in 0 to DMEM_WORDS - 1 loop
+                exit when endfile(mem_file);
+                readline(mem_file, l_buf);
+                hread(l_buf, h_val);
+                temp_ram(i) := h_val;
+            end loop;
+            file_close(mem_file);
+        end if;
+        return temp_ram;
+    end function;
+
+    signal ram : ram_array := init_ram("dmem.mem");
 begin
 
-    -- Synchronous Store (SB, SH, SW)
     process(clk)
         variable word_idx    : natural range 0 to DMEM_WORDS - 1;
         variable byte_offset : natural range 0 to 3;
@@ -65,7 +86,6 @@ begin
         end if;
     end process;
 
-    -- Combinational Load (LB, LH, LW, LBU, LHU)
     process(ram, mem_read, address, funct3)
         variable word_idx     : natural range 0 to DMEM_WORDS - 1;
         variable byte_offset  : natural range 0 to 3;

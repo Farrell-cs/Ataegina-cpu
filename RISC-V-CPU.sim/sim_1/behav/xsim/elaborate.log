@@ -1,7 +1,7 @@
 Vivado Simulator v2026.1
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 Copyright 2022-2026 Advanced Micro Devices, Inc. All Rights Reserved.
-Running: C:/AMDDesignTools/2026.1/Vivado/bin/unwrapped/win64.o/xelab.exe --incr --debug typical --relax --mt 2 -L xil_defaultlib -L secureip --snapshot tb_PC_Unit_behav xil_defaultlib.tb_PC_Unit -log elaborate.log 
+Running: C:/AMDDesignTools/2026.1/Vivado/bin/unwrapped/win64.o/xelab.exe --incr --debug typical --relax --mt 2 -L xil_defaultlib -L secureip --snapshot CPU_Top_behav xil_defaultlib.CPU_Top -log elaborate.log 
 INFO: [XSIM 43-3493] Using 2 slave threads.
 Starting static elaboration
 Completed static elaboration
@@ -13,6 +13,37 @@ Compiling package std.textio
 Compiling package ieee.std_logic_1164
 Compiling package ieee.numeric_std
 Compiling package xil_defaultlib.constants
-Compiling architecture behavioral of entity xil_defaultlib.PC_Unit [pc_unit_default]
-Compiling architecture sim of entity xil_defaultlib.tb_pc_unit
-Built simulation snapshot tb_PC_Unit_behav
+Compiling package ieee.std_logic_textio
+Compiling package unisim.vcomponents
+Compiling package ieee.std_logic_arith
+Compiling package ieee.std_logic_signed
+Compiling package ieee.vital_timing
+Compiling package ieee.vital_primitives
+Compiling package unisim.vpkg
+Compiling package vl.vl_types
+Compiling architecture behavioral of entity xil_defaultlib.PC [pc_default]
+Compiling architecture behavioral of entity xil_defaultlib.Adder [adder_default]
+Compiling architecture behavioral of entity xil_defaultlib.Instruction_Memory [instruction_memory_default]
+Compiling architecture behavioral of entity xil_defaultlib.Control [control_default]
+Compiling architecture behavioral of entity xil_defaultlib.Registers [registers_default]
+Compiling architecture behavioral of entity xil_defaultlib.Imm_Gen [imm_gen_default]
+Compiling architecture behavioral of entity xil_defaultlib.Mux2 [mux2_default]
+Compiling architecture behavioral of entity xil_defaultlib.ALU_Control [alu_control_default]
+Compiling architecture behavioral of entity xil_defaultlib.ALU [alu_default]
+Compiling architecture behavioral of entity xil_defaultlib.Branch_And [branch_and_default]
+Compiling architecture behavioral of entity xil_defaultlib.Data_Memory [data_memory_default]
+Compiling architecture bufg_v of entity unisim.BUFG [bufg_default]
+Compiling architecture plle2_adv_v of entity unisim.PLLE2_ADV [\PLLE2_ADV(clkfbout_mult=59,clki...]
+Compiling architecture plle2_base_v of entity unisim.PLLE2_BASE [\PLLE2_BASE(clkfbout_mult=59,clk...]
+Compiling architecture rtl of entity xil_defaultlib.clock_gen [clock_gen_default]
+Compiling architecture rtl of entity xil_defaultlib.timing_generator [timing_generator_default]
+Compiling architecture rtl of entity xil_defaultlib.Framebuffer_RAM [framebuffer_ram_default]
+Compiling architecture rtl of entity xil_defaultlib.tmds_encoder [tmds_encoder_default]
+Compiling architecture oserdese2_v of entity unisim.OSERDESE2 [\OSERDESE2(data_rate_tq="SDR",da...]
+Compiling architecture oserdese2_v of entity unisim.OSERDESE2 [\OSERDESE2(data_rate_tq="SDR",da...]
+Compiling architecture obufds_v of entity unisim.OBUFDS [\OBUFDS(iostandard="TMDS_33")(1,...]
+Compiling architecture rtl of entity xil_defaultlib.serializer [serializer_default]
+Compiling architecture rtl of entity xil_defaultlib.rgb2tmds [rgb2tmds_default]
+Compiling architecture rtl of entity xil_defaultlib.HDMI_Controller [hdmi_controller_default]
+Compiling architecture structural of entity xil_defaultlib.cpu_top
+Built simulation snapshot CPU_Top_behav

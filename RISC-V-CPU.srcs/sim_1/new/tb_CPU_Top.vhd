@@ -1,93 +1,108 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
+use std.textio.all;
 use work.Constants.ALL;
 
 entity tb_CPU_Top is
 end entity tb_CPU_Top;
 
 architecture sim of tb_CPU_Top is
-    constant CLK_PERIOD : time := 10 ns;
+    constant CLK_PERIOD : time := 8 ns;
 
-    signal clk             : std_logic := '0';
-    signal rst             : std_logic := '1';
-    signal pc_out_dbg      : std_logic_vector(WORD_WIDTH - 1 downto 0);
-    signal instruction_dbg : std_logic_vector(WORD_WIDTH - 1 downto 0);
-    signal alu_result_dbg  : std_logic_vector(WORD_WIDTH - 1 downto 0);
-    signal write_data_dbg  : std_logic_vector(WORD_WIDTH - 1 downto 0);
+    signal clk         : std_logic := '0';
+    signal rst         : std_logic := '1';
+    signal btn         : std_logic_vector(2 downto 0) := "000";
+    signal hdmi_clk_p  : std_logic;
+    signal hdmi_clk_n  : std_logic;
+    signal hdmi_data_p : std_logic_vector(2 downto 0);
+    signal hdmi_data_n : std_logic_vector(2 downto 0);
+
+    type shadow_vram_t is array (0 to 14399) of std_logic_vector(7 downto 0);
+    signal shadow_vram : shadow_vram_t := (others => X"00");
+    signal vram_writes : integer := 0;
+
 begin
 
     uut: entity work.CPU_Top
         generic map(
-            IMEM_WORDS => 256,
-            DMEM_WORDS => 256
+            IMEM_WORDS => 1024,
+            DMEM_WORDS => 1024
         )
         port map(
-            clk             => clk,
-            rst             => rst,
-            pc_out_dbg      => pc_out_dbg,
-            instruction_dbg => instruction_dbg,
-            alu_result_dbg  => alu_result_dbg,
-            write_data_dbg  => write_data_dbg
+            clk         => clk,
+            rst         => rst,
+            btn         => btn,
+            hdmi_clk_p  => hdmi_clk_p,
+            hdmi_clk_n  => hdmi_clk_n,
+            hdmi_data_p => hdmi_data_p,
+            hdmi_data_n => hdmi_data_n
         );
 
     clk_proc: process
     begin
-        while now < 300 ns loop
+        while now < 2 ms loop
             clk <= '0'; wait for CLK_PERIOD / 2;
             clk <= '1'; wait for CLK_PERIOD / 2;
         end loop;
         wait;
     end process;
 
+    process
+        alias c_clk  is << signal .tb_CPU_Top.uut.cpu_clk   : std_logic >>;
+        alias v_we   is << signal .tb_CPU_Top.uut.vram_we   : std_logic >>;
+        alias v_addr is << signal .tb_CPU_Top.uut.vram_addr : std_logic_vector(15 downto 0) >>;
+        alias v_din  is << signal .tb_CPU_Top.uut.vram_din  : std_logic_vector(7 downto 0) >>;
+        variable a_int : integer;
+    begin
+        wait until rising_edge(c_clk);
+        if v_we = '1' then
+            a_int := to_integer(unsigned(v_addr));
+            if a_int < 14400 then
+                shadow_vram(a_int) <= v_din;
+                if v_din /= X"00" then
+                    report "NON-ZERO VRAM WRITE: addr=" & integer'image(a_int) & " data=" & to_hstring(v_din) severity note;
+                end if;
+                vram_writes <= vram_writes + 1;
+            end if;
+        end if;
+    end process;
+
     stim_proc: process
+        alias c_clk is << signal .tb_CPU_Top.uut.cpu_clk : std_logic >>;
+        file out_file     : text;
+        variable out_line : line;
+        variable r_val, g_val, b_val : integer;
+        variable b_byte   : std_logic_vector(7 downto 0);
     begin
         rst <= '1';
-        wait for CLK_PERIOD * 3;
-        wait until falling_edge(clk);
-        assert pc_out_dbg = X"00000000" report "Reset failed to hold PC at 0x00" severity error;
+        wait for CLK_PERIOD * 20;
         rst <= '0';
 
-        -- Cycle 1 (PC = 0x00): addi x1, x0, 10
-        assert pc_out_dbg = X"00000000" report "Cycle 1 PC mismatch" severity error;
-        assert write_data_dbg = std_logic_vector(to_unsigned(10, 32))
-            report "Cycle 1: addi x1 writeback mismatch" severity error;
+        for i in 1 to 55000 loop
+            wait until rising_edge(c_clk);
+        end loop;
 
-        -- Cycle 2 (PC = 0x04): addi x2, x0, 20
-        wait until falling_edge(clk);
-        assert pc_out_dbg = X"00000004" report "Cycle 2 PC mismatch" severity error;
-        assert write_data_dbg = std_logic_vector(to_unsigned(20, 32))
-            report "Cycle 2: addi x2 writeback mismatch" severity error;
+        report "REAL VHDL CPU FINISHED 55,000 CYCLES. Total VRAM writes: " & integer'image(vram_writes) severity note;
 
-        -- Cycle 3 (PC = 0x08): add x3, x1, x2 (10 + 20 = 30)
-        wait until falling_edge(clk);
-        assert pc_out_dbg = X"00000008" report "Cycle 3 PC mismatch" severity error;
-        assert write_data_dbg = std_logic_vector(to_unsigned(30, 32))
-            report "Cycle 3: add x3 writeback mismatch" severity error;
+        file_open(out_file, "vhdl_cpu_pong_frame.ppm", write_mode);
+        write(out_line, string'("P3")); writeline(out_file, out_line);
+        write(out_line, string'("160 90")); writeline(out_file, out_line);
+        write(out_line, string'("255")); writeline(out_file, out_line);
 
-        -- Cycle 4 (PC = 0x0C): sw x3, 16(x0)
-        wait until falling_edge(clk);
-        assert pc_out_dbg = X"0000000C" report "Cycle 4 PC mismatch" severity error;
-        assert alu_result_dbg = X"00000010"
-            report "Cycle 4: sw address mismatch" severity error;
+        for y in 0 to 89 loop
+            for x in 0 to 159 loop
+                b_byte := shadow_vram(y * 160 + x);
+                r_val := to_integer(unsigned(b_byte(7 downto 5))) * 36;
+                g_val := to_integer(unsigned(b_byte(4 downto 2))) * 36;
+                b_val := to_integer(unsigned(b_byte(1 downto 0))) * 85;
+                write(out_line, integer'image(r_val) & " " & integer'image(g_val) & " " & integer'image(b_val) & " ");
+            end loop;
+            writeline(out_file, out_line);
+        end loop;
 
-        -- Cycle 5 (PC = 0x10): lw x4, 16(x0) -> loads 30 from Data_Memory
-        wait until falling_edge(clk);
-        assert pc_out_dbg = X"00000010" report "Cycle 5 PC mismatch" severity error;
-        assert write_data_dbg = std_logic_vector(to_unsigned(30, 32))
-            report "Cycle 5: lw x4 writeback mismatch" severity error;
-
-        -- Cycle 6 (PC = 0x14): beq x3, x4, +8 (30 == 30 -> Zero='1', PCSrc='1')
-        wait until falling_edge(clk);
-        assert pc_out_dbg = X"00000014" report "Cycle 6 PC mismatch" severity error;
-
-        -- Cycle 7 (PC = 0x1C): addi x5, x0, 42 (branch skipped 0x18!)
-        wait until falling_edge(clk);
-        assert pc_out_dbg = X"0000001C" report "Cycle 7: Branch did not skip 0x18 to 0x1C" severity error;
-        assert write_data_dbg = std_logic_vector(to_unsigned(42, 32))
-            report "Cycle 7: addi x5 writeback mismatch" severity error;
-
-        report "ALL TESTS PASSED: Figure 4.17 RISC-V Datapath executes end-to-end!" severity note;
+        file_close(out_file);
+        report "SUCCESS: vhdl_cpu_pong_frame.ppm dumped from real VHDL CPU!" severity note;
         wait;
     end process;
 

@@ -18,25 +18,21 @@ begin
 
     stim_proc: process
     begin
-        -- I-Type: addi x1, x0, -4 (0xFFC00093)
         instruction <= X"FFC00093";
         wait for 5 ns;
-        assert imm_out = X"FFFFFFFC" report "I-type imm failed" severity error;
+        assert imm_out = X"FFFFFFFC" report "I-type mismatch" severity error;
 
-        -- S-Type: sw x2, 8(x1) (0x0020A423)
         instruction <= X"0020A423";
         wait for 5 ns;
-        assert imm_out = X"00000008" report "S-type imm failed" severity error;
+        assert imm_out = X"00000008" report "S-type mismatch" severity error;
 
-        -- B-Type: beq x1, x2, -8 (0xFE208CE3)
         instruction <= X"FE208CE3";
         wait for 5 ns;
-        assert imm_out = X"FFFFFFF8" report "B-type imm failed" severity error;
+        assert imm_out = X"FFFFFFF8" report "B-type mismatch" severity error;
 
-        -- U-Type: lui x5, 0x12345 (0x123452B7)
         instruction <= X"123452B7";
         wait for 5 ns;
-        assert imm_out = X"12345000" report "U-type imm failed" severity error;
+        assert imm_out = X"12345000" report "U-type mismatch" severity error;
 
         report "tb_Imm_Gen passed successfully." severity note;
         wait;

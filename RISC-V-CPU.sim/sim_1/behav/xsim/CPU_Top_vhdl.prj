@@ -1,0 +1,25 @@
+# compile vhdl design source files
+vhdl xil_defaultlib  \
+"../../../../RISC-V-CPU.srcs/sources_1/new/Constants.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/ALU.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/ALU_Control.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/Adder.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/Branch_And.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/PC.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/Instruction_Memory.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/Control.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/Registers.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/Imm_Gen.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/Mux2.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/Data_Memory.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/clock_gen.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/timing_generator.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/Framebuffer_RAM.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/tmds_encoder.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/serializer.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/rgb2tmds.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/HDMI_Controller.vhd" \
+"../../../../RISC-V-CPU.srcs/sources_1/new/CPU_Top.vhd" \
+
+# Do not sort compile order
+nosort

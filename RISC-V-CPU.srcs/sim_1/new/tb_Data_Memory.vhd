@@ -52,16 +52,16 @@ begin
 
         mem_read <= '1';
         wait for 1 ns;
-        assert read_data = X"DEADBEEF" report "LW failed" severity error;
+        assert read_data = X"DEADBEEF" report "LW mismatch" severity error;
 
         address <= X"00000013";
         funct3  <= F3_BYTE;
         wait for 1 ns;
-        assert read_data = X"FFFFFFDE" report "LB sign extension failed" severity error;
+        assert read_data = X"FFFFFFDE" report "LB mismatch" severity error;
 
         funct3 <= F3_BYTE_U;
         wait for 1 ns;
-        assert read_data = X"000000DE" report "LBU zero extension failed" severity error;
+        assert read_data = X"000000DE" report "LBU mismatch" severity error;
 
         report "tb_Data_Memory passed successfully." severity note;
         wait;
