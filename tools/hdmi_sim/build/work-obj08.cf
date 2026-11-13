@@ -1,0 +1,85 @@
+v 4
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\tools\hdmi_sim\tb_cpu_hdmi.vhd" "28cf478a3c931de2fdbe33d0e34f60ebb8eee04d" "20261113035958.880":
+  entity tb_cpu_hdmi at 1( 0) + 0 on 381;
+  architecture sim of tb_cpu_hdmi at 8( 117) + 0 on 382;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\tools\hdmi_sim\tmds_receiver.vhd" "e74f49062d08125b85a9f02526668db3526fbb06" "20261113035958.482":
+  entity tmds_receiver at 1( 0) + 0 on 377;
+  architecture sim of tmds_receiver at 21( 549) + 0 on 378;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\HDMI_Controller.vhd" "a8c603fe22d667bbc261d3cd5f36adceab0ce8aa" "20261113035957.692":
+  entity hdmi_controller at 1( 0) + 0 on 373;
+  architecture rtl of hdmi_controller at 27( 774) + 0 on 374;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\tmds_encoder.vhd" "44da3916a1284ee99d44c76f1bed01e4902cd812" "20261113035957.012":
+  entity tmds_encoder at 49( 2575) + 0 on 369;
+  architecture behavioral of tmds_encoder at 80( 3530) + 0 on 370;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\OutputSERDES.vhd" "da1eb204534954d5c0706329bdaf9f600f361d5f" "20261113035956.751":
+  entity outputserdes at 47( 2418) + 0 on 365;
+  architecture behavioral of outputserdes at 76( 3270) + 0 on 366;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\SyncAsyncReset.vhd" "6b1ff854f497bdb6c98d5cb9a41d3f9c0f091051" "20261113035956.443":
+  entity resetbridge at 51( 2735) + 0 on 361;
+  architecture behavioral of resetbridge at 72( 3328) + 0 on 362;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\Framebuffer_RAM.vhd" "838a89c4fb2f6c7e1ed18f468c3ddc736ff1b98f" "20261113035956.065":
+  entity framebuffer_ram at 1( 0) + 0 on 357;
+  architecture rtl of framebuffer_ram at 30( 993) + 0 on 358;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\clock_gen.vhd" "79a32931a5b92e8e03a714db14249f91a10f62db" "20261113035955.744":
+  entity clock_gen at 1( 0) + 0 on 353;
+  architecture rtl of clock_gen at 24( 695) + 0 on 354;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\Mux2.vhd" "e91412c6c00e0e832f5e848cb856314ec831315d" "20261113035955.418":
+  entity mux2 at 1( 0) + 0 on 349;
+  architecture behavioral of mux2 at 14( 358) + 0 on 350;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\Registers.vhd" "40819782c81b51066b7bdcc999aff116fee8c895" "20261113035955.104":
+  entity registers at 1( 0) + 0 on 345;
+  architecture behavioral of registers at 20( 709) + 0 on 346;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\Instruction_Memory.vhd" "ee7dcaae85a64b42616944bd68a542e731291979" "20261113035954.767":
+  entity instruction_memory at 1( 0) + 0 on 341;
+  architecture behavioral of instruction_memory at 22( 693) + 0 on 342;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\UART_Program_Loader.vhd" "fc74d26fd6cb5273aa9687ff3c3c8cd4d70ea810" "20261113035954.421":
+  entity uart_program_loader at 1( 0) + 0 on 337;
+  architecture behavioral of uart_program_loader at 21( 565) + 0 on 338;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\Adder.vhd" "c6b9a0de7c89574c9ce01af10a839345952d149a" "20261113035954.160":
+  entity adder at 1( 0) + 0 on 333;
+  architecture behavioral of adder at 14( 344) + 0 on 334;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\ALU.vhd" "b19bf3f94bc787f2047a094ce6e970c8aaffc385" "20261113035953.720":
+  entity alu at 1( 0) + 0 on 329;
+  architecture behavioral of alu at 16( 451) + 0 on 330;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\Constants.vhd" "9f44104d0ac37000749d8c95dab9372f2dfd7b44" "20261113035953.617":
+  package constants at 1( 0) + 0 on 327 body;
+  package body constants at 67( 3348) + 0 on 328;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\ALU_Control.vhd" "ee0316ae44a278db6e691984d2020b22828c2d1d" "20261113035953.947":
+  entity alu_control at 1( 0) + 0 on 331;
+  architecture behavioral of alu_control at 14( 341) + 0 on 332;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\Branch_And.vhd" "525d527d5654dc6995585edf4863cd94c4c03c62" "20261113035954.295":
+  entity branch_and at 1( 0) + 0 on 335;
+  architecture behavioral of branch_and at 15( 322) + 0 on 336;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\PC.vhd" "1e20b629cd347e6194c2c71751d709fd6c2e2a70" "20261113035954.624":
+  entity pc at 1( 0) + 0 on 339;
+  architecture behavioral of pc at 15( 345) + 0 on 340;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\Control.vhd" "ce38bc6dad35f5602daf19b3746576aafbe2ce65" "20261113035954.957":
+  entity control at 1( 0) + 0 on 343;
+  architecture behavioral of control at 21( 577) + 0 on 344;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\Imm_Gen.vhd" "f30ee429b30eac945de0c509f2e4718fce350e56" "20261113035955.275":
+  entity imm_gen at 1( 0) + 0 on 347;
+  architecture behavioral of imm_gen at 13( 299) + 0 on 348;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\Data_Memory.vhd" "ab8723c9adc9608b585951451128f60b5f590e46" "20261113035955.537":
+  entity data_memory at 1( 0) + 0 on 351;
+  architecture behavioral of data_memory at 24( 668) + 0 on 352;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\timing_generator.vhd" "6ef2e438e279b1d04c140f742e719e28fdf9e78e" "20261113035955.862":
+  entity timing_generator at 1( 0) + 0 on 355;
+  architecture rtl of timing_generator at 19( 488) + 0 on 356;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\SyncAsync.vhd" "76643309131b8aaef18b7d5454acb0d000585a85" "20261113035956.311":
+  entity syncasync at 49( 2601) + 0 on 359;
+  architecture behavioral of syncasync at 72( 3290) + 0 on 360;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\ClockGen.vhd" "5289c35e1d496d05a73b7dae7fcdd47eb538e2fe" "20261113035956.538":
+  entity clockgen at 22( 487) + 0 on 363;
+  architecture behavioral of clockgen at 46( 1283) + 0 on 364;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\DVI_Constants.vhd" "7967b173a58e71942db4dc1dcc4d892c6926e48b" "20261113035956.907":
+  package dvi_constants at 45( 2360) + 0 on 367;
+  package body dvi_constants at 68( 3168) + 0 on 368;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\rgb2dvi.vhd" "dc427e2f06c091b5c14278f762fd76f959e4534d" "20261113035957.400":
+  entity rgb2dvi at 50( 2619) + 0 on 371;
+  architecture behavioral of rgb2dvi at 94( 4300) + 0 on 372;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\RISC-V-CPU.srcs\sources_1\new\CPU_Top.vhd" "046e4f9262154a5b4aadb825f262d24cb1595fdc" "20261113035957.869":
+  entity cpu_top at 1( 0) + 0 on 375;
+  architecture structural of cpu_top at 24( 669) + 0 on 376;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\tools\hdmi_sim\tb_hdmi_dvi.vhd" "20bd240cd1d11c0474ae66f3811d569a3f36a87a" "20261113035958.706":
+  entity tb_hdmi_dvi at 1( 0) + 0 on 379;
+  architecture sim of tb_hdmi_dvi at 8( 117) + 0 on 380;

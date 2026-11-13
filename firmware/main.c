@@ -148,6 +148,16 @@ int main(void) {
 
     while (1) {
         uint32_t btn = BUTTONS;
+        if (btn & 0x04) {
+            score[0] = 0;
+            score[1] = 0;
+            init_game();
+            old_ball_x = ball.x;
+            old_ball_y = ball.y;
+            old_p0_y   = paddle[0].y;
+            old_p1_y   = paddle[1].y;
+            continue;
+        }
         if (btn & 0x01) move_paddle(1);
         if (btn & 0x02) move_paddle(0);
 
@@ -174,8 +184,12 @@ int main(void) {
         old_p0_y   = paddle[0].y;
         old_p1_y   = paddle[1].y;
 
+#ifdef SIM_FAST
+        delay(1200);
+#else
         // Smooth ~60 FPS delay at 36.875 MHz
         delay(40000);
+#endif
     }
 
     return 0;

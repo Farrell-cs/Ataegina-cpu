@@ -1,0 +1,20 @@
+v 4
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\tools\hdmi_sim\unisim\unisim_primitives.vhd" "4f5440bd970aaacd8debc1f0da0270388963d30c" "20261113090233.103":
+  entity bufg at 1( 0) + 0 on 233;
+  architecture sim of bufg at 11( 150) + 0 on 234;
+  entity bufio at 16( 219) + 0 on 235;
+  architecture sim of bufio at 26( 371) + 0 on 236;
+  entity bufr at 31( 441) + 0 on 237;
+  architecture sim of bufr at 47( 774) + 0 on 238;
+  entity obufds at 52( 843) + 0 on 239;
+  architecture sim of obufds at 68( 1176) + 0 on 240;
+  entity plle2_base at 74( 1281) + 0 on 241;
+  architecture sim of plle2_base at 121( 3034) + 0 on 242;
+  entity plle2_adv at 253( 7608) + 0 on 243;
+  architecture sim of plle2_adv at 312( 9986) + 0 on 244;
+  entity mmcme2_adv at 317( 10071) + 0 on 245;
+  architecture sim of mmcme2_adv at 403( 13890) + 0 on 246;
+  entity oserdese2 at 408( 13976) + 0 on 247;
+  architecture sim of oserdese2 at 470( 16259) + 0 on 248;
+file / "C:\Users\Farrell\Documents\Kuliah-S1\Semester 3\PSD-DSD\RISC-V-CPU\tools\hdmi_sim\unisim\unisim_vcomponents.vhd" "2bae97f30977fd6521a46c0de1e17fba71c6e059" "20261113090232.994":
+  package vcomponents at 1( 0) + 0 on 232;
