@@ -187,8 +187,8 @@ int main(void) {
 #ifdef SIM_FAST
         delay(1200);
 #else
-        // Smooth ~60 FPS delay at 36.875 MHz
-        delay(40000);
+        // ~30 updates/sec at 36.875 MHz (inlined 2 cycles/iter -> ~1.23M cycles = 33.4 ms)
+        delay(615000);
 #endif
     }
 
