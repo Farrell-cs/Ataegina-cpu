@@ -50,17 +50,34 @@ package Constants is
     constant F3_BYTE_U : std_logic_vector(2 downto 0) := "100";
     constant F3_HALF_U : std_logic_vector(2 downto 0) := "101";
 
-    constant ALU_AND    : std_logic_vector(3 downto 0) := "0000";
-    constant ALU_OR     : std_logic_vector(3 downto 0) := "0001";
-    constant ALU_ADD    : std_logic_vector(3 downto 0) := "0010";
-    constant ALU_SLL    : std_logic_vector(3 downto 0) := "0011";
-    constant ALU_SLT    : std_logic_vector(3 downto 0) := "0100";
-    constant ALU_SLTU   : std_logic_vector(3 downto 0) := "0101";
-    constant ALU_SUB    : std_logic_vector(3 downto 0) := "0110";
-    constant ALU_XOR    : std_logic_vector(3 downto 0) := "0111";
-    constant ALU_SRL    : std_logic_vector(3 downto 0) := "1000";
-    constant ALU_SRA    : std_logic_vector(3 downto 0) := "1001";
-    constant ALU_PASS_B : std_logic_vector(3 downto 0) := "1010";
+    constant F3_MUL    : std_logic_vector(2 downto 0) := "000";
+    constant F3_MULH   : std_logic_vector(2 downto 0) := "001";
+    constant F3_MULHSU : std_logic_vector(2 downto 0) := "010";
+    constant F3_MULHU  : std_logic_vector(2 downto 0) := "011";
+    constant F3_DIV    : std_logic_vector(2 downto 0) := "100";
+    constant F3_DIVU   : std_logic_vector(2 downto 0) := "101";
+    constant F3_REM    : std_logic_vector(2 downto 0) := "110";
+    constant F3_REMU   : std_logic_vector(2 downto 0) := "111";
+
+    constant ALU_AND    : std_logic_vector(4 downto 0) := "00000";
+    constant ALU_OR     : std_logic_vector(4 downto 0) := "00001";
+    constant ALU_ADD    : std_logic_vector(4 downto 0) := "00010";
+    constant ALU_SLL    : std_logic_vector(4 downto 0) := "00011";
+    constant ALU_SLT    : std_logic_vector(4 downto 0) := "00100";
+    constant ALU_SLTU   : std_logic_vector(4 downto 0) := "00101";
+    constant ALU_SUB    : std_logic_vector(4 downto 0) := "00110";
+    constant ALU_XOR    : std_logic_vector(4 downto 0) := "00111";
+    constant ALU_SRL    : std_logic_vector(4 downto 0) := "01000";
+    constant ALU_SRA    : std_logic_vector(4 downto 0) := "01001";
+    constant ALU_PASS_B : std_logic_vector(4 downto 0) := "01010";
+    constant ALU_MUL    : std_logic_vector(4 downto 0) := "01011";
+    constant ALU_MULH   : std_logic_vector(4 downto 0) := "01100";
+    constant ALU_MULHSU : std_logic_vector(4 downto 0) := "01101";
+    constant ALU_MULHU  : std_logic_vector(4 downto 0) := "01110";
+    constant ALU_DIV    : std_logic_vector(4 downto 0) := "01111";
+    constant ALU_DIVU   : std_logic_vector(4 downto 0) := "10000";
+    constant ALU_REM    : std_logic_vector(4 downto 0) := "10001";
+    constant ALU_REMU   : std_logic_vector(4 downto 0) := "10010";
 
 end package Constants;
 

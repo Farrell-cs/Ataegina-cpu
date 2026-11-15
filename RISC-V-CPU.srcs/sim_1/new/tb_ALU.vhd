@@ -9,7 +9,7 @@ end entity tb_ALU;
 architecture sim of tb_ALU is
     signal in_1       : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
     signal in_2       : std_logic_vector(WORD_WIDTH - 1 downto 0) := (others => '0');
-    signal alu_ctrl   : std_logic_vector(3 downto 0) := ALU_ADD;
+    signal alu_ctrl   : std_logic_vector(4 downto 0) := ALU_ADD;
     signal zero       : std_logic;
     signal alu_result : std_logic_vector(WORD_WIDTH - 1 downto 0);
 begin
@@ -47,6 +47,26 @@ begin
         alu_ctrl <= ALU_SLTU;
         wait for 10 ns;
         assert alu_result = X"00000000" report "ALU_SLTU failed" severity error;
+
+        in_1     <= std_logic_vector(to_signed(-7, 32));
+        in_2     <= std_logic_vector(to_signed(6, 32));
+        alu_ctrl <= ALU_MUL;
+        wait for 10 ns;
+        assert alu_result = std_logic_vector(to_signed(-42, 32)) report "ALU_MUL failed" severity error;
+
+        alu_ctrl <= ALU_MULH;
+        wait for 10 ns;
+        assert alu_result = X"FFFFFFFF" report "ALU_MULH failed" severity error;
+
+        in_1     <= X"80000000";
+        in_2     <= X"00000002";
+        alu_ctrl <= ALU_MULHSU;
+        wait for 10 ns;
+        assert alu_result = X"FFFFFFFF" report "ALU_MULHSU failed" severity error;
+
+        alu_ctrl <= ALU_MULHU;
+        wait for 10 ns;
+        assert alu_result = X"00000001" report "ALU_MULHU failed" severity error;
 
         report "tb_ALU passed successfully." severity note;
         wait;

@@ -1,0 +1,1 @@
+"tb_ALU" -s "sim_alu" 

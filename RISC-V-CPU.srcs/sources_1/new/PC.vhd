@@ -7,6 +7,7 @@ entity PC is
     port(
         clk    : in  std_logic;
         rst    : in  std_logic;
+        en     : in  std_logic := '1';
         pc_in  : in  std_logic_vector(WORD_WIDTH - 1 downto 0);
         pc_out : out std_logic_vector(WORD_WIDTH - 1 downto 0)
     );
@@ -26,7 +27,7 @@ begin
         if rising_edge(clk) then
             if rst = '1' then
                 pc_reg <= X"00000000";
-            else
+            elsif en = '1' then
                 pc_reg <= pc_in(31 downto 1) & '0';
             end if;
         end if;

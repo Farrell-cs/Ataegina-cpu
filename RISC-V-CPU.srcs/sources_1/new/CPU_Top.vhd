@@ -40,6 +40,7 @@ architecture Structural of CPU_Top is
     signal write_reg     : std_logic_vector(REG_ADDR_WIDTH - 1 downto 0);
     signal funct3        : std_logic_vector(2 downto 0);
     signal funct7_b5     : std_logic;
+    signal funct7_b0     : std_logic;
 
     signal branch        : std_logic;
     signal mem_read      : std_logic;
@@ -48,6 +49,8 @@ architecture Structural of CPU_Top is
     signal mem_write     : std_logic;
     signal alu_src       : std_logic;
     signal reg_write     : std_logic;
+    signal reg_write_eff : std_logic;
+    signal pc_en         : std_logic;
     signal jump          : std_logic;
     signal jalr          : std_logic;
     signal auipc         : std_logic;
@@ -58,8 +61,12 @@ architecture Structural of CPU_Top is
 
     signal alu_in_1      : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal alu_in_2      : std_logic_vector(WORD_WIDTH - 1 downto 0);
-    signal alu_ctrl      : std_logic_vector(3 downto 0);
+    signal alu_ctrl      : std_logic_vector(4 downto 0);
     signal alu_result    : std_logic_vector(WORD_WIDTH - 1 downto 0);
+    signal div_result    : std_logic_vector(WORD_WIDTH - 1 downto 0);
+    signal exec_result   : std_logic_vector(WORD_WIDTH - 1 downto 0);
+    signal is_div_op     : std_logic;
+    signal div_stall     : std_logic;
     signal zero          : std_logic;
 
     signal jump_base     : std_logic_vector(WORD_WIDTH - 1 downto 0);
@@ -115,10 +122,14 @@ begin
             imem_wdata    => loader_wdata
         );
 
+    pc_en         <= not div_stall;
+    reg_write_eff <= reg_write and (not div_stall);
+
     u_pc: entity work.PC
         port map(
             clk    => cpu_clk,
             rst    => cpu_rst,
+            en     => pc_en,
             pc_in  => pc_in,
             pc_out => pc_out
         );
@@ -149,6 +160,7 @@ begin
     read_reg_1 <= instruction(19 downto 15);
     read_reg_2 <= instruction(24 downto 20);
     funct7_b5  <= instruction(30);
+    funct7_b0  <= instruction(25);
     const_four <= X"00000004";
 
     u_control: entity work.Control
@@ -170,7 +182,7 @@ begin
         port map(
             clk         => cpu_clk,
             rst         => cpu_rst,
-            reg_write   => reg_write,
+            reg_write   => reg_write_eff,
             read_reg_1  => read_reg_1,
             read_reg_2  => read_reg_2,
             write_reg   => write_reg,
@@ -206,6 +218,7 @@ begin
             alu_op    => alu_op,
             funct3    => funct3,
             funct7_b5 => funct7_b5,
+            funct7_b0 => funct7_b0,
             alu_ctrl  => alu_ctrl
         );
 
@@ -217,6 +230,20 @@ begin
             zero       => zero,
             alu_result => alu_result
         );
+
+    u_div_unit: entity work.Div_Unit
+        port map(
+            clk        => cpu_clk,
+            rst        => cpu_rst,
+            alu_ctrl   => alu_ctrl,
+            in_1       => alu_in_1,
+            in_2       => alu_in_2,
+            is_div_op  => is_div_op,
+            stall      => div_stall,
+            div_result => div_result
+        );
+
+    exec_result <= div_result when is_div_op = '1' else alu_result;
 
     u_mux_jump_base: entity work.Mux2
         port map(
@@ -314,7 +341,7 @@ begin
 
     u_mux_mem_to_reg: entity work.Mux2
         port map(
-            in_0    => alu_result,
+            in_0    => exec_result,
             in_1    => read_data,
             sel     => mem_to_reg,
             mux_out => mem_or_alu
