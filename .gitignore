@@ -1,1 +1,36 @@
 Documentation/
+
+# Vivado generated folders & artifacts
+.Xil/
+*.runs/
+*.cache/
+*.sim/
+*.hw/
+*.ip_user_files/
+*.gen/
+*.jou
+*.log
+*.str
+*.pb
+*.wdb
+*.dcp
+*.rpt
+vivado*.jou
+vivado*.log
+
+# xsim / CLI simulation outputs
+xsim.dir/
+xvhdl.log
+xvhdl.pb
+xelab.log
+xelab.pb
+xsim.log
+xsim_*.jou
+
+# GHDL / HDMI simulator build outputs
+tools/hdmi_sim/build/
+*.cf
+*.o
+*.exe
+__pycache__/
+*.pyc
