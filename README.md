@@ -1,11 +1,8 @@
-# RV32I Single-Cycle RISC-V SoC with 720p HDMI Output
+# RV32I Single-Cycle RISC-V SoC with 720p HDMI Output (Older README I wrote, I'll write a newer one)
 
 A bare-metal 32-bit **RISC-V (RV32I)** System-on-Chip written in VHDL for the **Digilent Zybo Z7-10** (`xc7z010clg400-1`). It executes instructions from on-chip memory, accepts live program uploads over UART, reads physical pushbuttons, and drives a real-time **1280x720 DVI/HDMI** display running a bare-metal **Pong** game in C.
 
 The project also includes a full **GHDL + SDL2 hardware simulator** so you can play the game or verify HDMI video timing directly on your PC from the actual VHDL RTL before flashing the FPGA.
-
-> **Think of the architecture like an artist and a gallery display sharing a whiteboard:** the RISC-V CPU (the artist) draws game objects into a small `160x90` pixel memory whenever it updates the game, while the HDMI controller (the display scanner) continuously reads that memory in the background, scales every pixel up 8x, and streams 720p video over TMDS differential pairs to the monitor.
-
 ---
 
 ## System Specifications
