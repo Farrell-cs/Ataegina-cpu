@@ -24,6 +24,7 @@ RTL_FILES = [
     SRC_DIR / "Constants.vhd",
     SRC_DIR / "ALU.vhd",
     SRC_DIR / "ALU_Control.vhd",
+    SRC_DIR / "Div_Unit.vhd",
     SRC_DIR / "Adder.vhd",
     SRC_DIR / "Branch_And.vhd",
     SRC_DIR / "UART_Program_Loader.vhd",
@@ -85,7 +86,7 @@ def bin_to_mem(bin_path, mem_path, min_words=1):
     return len(words)
 
 
-def compile_sim_firmware(env):
+def compile_sim_firmware(env, src_file="main.c"):
     rv_gcc = VITIS_RV_BIN / "riscv64-unknown-elf-gcc.exe"
     rv_objcopy = VITIS_RV_BIN / "riscv64-unknown-elf-objcopy.exe"
     if not rv_gcc.exists() or not rv_objcopy.exists():
@@ -101,7 +102,7 @@ def compile_sim_firmware(env):
     run_cmd(
         [
             rv_gcc,
-            "-march=rv32i",
+            "-march=rv32im",
             "-mabi=ilp32",
             "-O2",
             "-DSIM_FAST",
@@ -110,7 +111,7 @@ def compile_sim_firmware(env):
             "-T",
             "linker.ld",
             "crt0.s",
-            "main.c",
+            src_file,
             "-o",
             elf_rel,
         ],
@@ -192,13 +193,14 @@ def main():
     parser.add_argument("--native-res", action="store_true", help="Simulate at native 160x90 framebuffer resolution (~62x fewer pixels/frame).")
     parser.add_argument("--fast-rgb", action="store_true", help="Bypass 368.75 MHz 10:1 DDR SERDES/TMDS and sample pixel-rate RGB directly.")
     parser.add_argument("--fast-fw", action="store_true", help="Use -DSIM_FAST firmware (shorter Pong delay loop) in tools/hdmi_sim/sim_fw/.")
-    parser.add_argument("--fast", action="store_true", help="Preset: enables --native-res, --fast-rgb, and (for cpu) --fast-fw.")
+    parser.add_argument("--fw", type=str, default="main.c", help="Firmware C source to compile when --fast-fw is used (default: main.c).")
+    parser.add_argument("--fast", action="store_true", help="Preset: enables --fast-rgb at 720p (uses root imem.mem/dmem.mem).")
     parser.add_argument("--no-build", action="store_true", help="Skip recompiling if executable already exists.")
     args = parser.parse_args()
 
-    native_res = args.native_res or args.fast
+    native_res = args.native_res
     fast_rgb = args.fast_rgb or args.fast
-    fast_fw = args.fast_fw or (args.fast and args.target == "cpu")
+    fast_fw = args.fast_fw
 
     env = build_env()
     target_entity = TARGETS[args.target]
@@ -218,8 +220,7 @@ def main():
         exe_path = compile_all(target_entity, env, build_dir, native_res=native_res, fast_rgb=fast_rgb)
 
     if fast_fw:
-        if not args.no_build or not (SIM_FW_DIR / "imem.mem").exists():
-            compile_sim_firmware(env)
+        compile_sim_firmware(env, src_file=args.fw)
 
     env["HDMI_SIM_MODE"] = args.mode
     if args.frames is not None:

@@ -2,6 +2,7 @@ import subprocess
 import struct
 import shutil
 import os
+import sys
 
 GCC = r"C:\AMDDesignTools\2026.1\gnu\riscv\nt\bin\riscv64-unknown-elf-gcc.exe"
 OBJCOPY = r"C:\AMDDesignTools\2026.1\gnu\riscv\nt\bin\riscv64-unknown-elf-objcopy.exe"
@@ -28,12 +29,13 @@ def bin_to_mem(bin_path, mem_path, min_words=1):
             f.write(w + "\n")
     return len(words)
 
-def build():
-    print("1. Compiling C code with Vitis RISC-V GCC...")
+def build(src_file="main.c"):
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    print(f"1. Compiling {src_file} with Vitis RISC-V GCC (rv32im)...")
     subprocess.check_call([
-        GCC, "-march=rv32i", "-mabi=ilp32", "-O2",
+        GCC, "-march=rv32im", "-mabi=ilp32", "-O2",
         "-nostdlib", "-Wl,--build-id=none", "-T", "linker.ld",
-        "crt0.s", "main.c", "-o", "pong.elf"
+        "crt0.s", src_file, "-o", "pong.elf"
     ])
 
     print("2. Extracting .text (Instruction ROM) and .data (Data RAM)...")
@@ -51,4 +53,5 @@ def build():
     print(f"SUCCESS! imem.mem ({imem_words} words) and dmem.mem ({dmem_words} words) generated and synced.")
 
 if __name__ == "__main__":
-    build()
+    src = sys.argv[1] if len(sys.argv) > 1 else "main.c"
+    build(src)

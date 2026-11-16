@@ -28,7 +28,9 @@ xsim.log
 xsim_*.jou
 
 # GHDL / HDMI simulator build outputs
-tools/hdmi_sim/build/
+tools/hdmi_sim/build*/
+tools/hdmi_sim/sim_fw/
+*.bmp
 *.cf
 *.o
 *.exe

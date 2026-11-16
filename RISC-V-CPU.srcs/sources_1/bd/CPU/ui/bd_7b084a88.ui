@@ -1,0 +1,17 @@
+{
+   "ActiveEmotionalView":"Default View",
+   "Default View_ScaleFactor":"1.5",
+   "Default View_TopLeft":"-247,-412",
+   "ExpandedHierarchyInLayout":"",
+   "guistr":"# # String gsaved with Nlview 7.8.0 2024-04-26 e1825d835c VDI=44 GEI=38 GUI=JA:24.0
+#  -string -flagsOSRD
+preplace port DDR -pg 1 -lvl 2 -x 400 -y -200 -defaultsOSRD
+preplace port FIXED_IO -pg 1 -lvl 2 -x 400 -y -170 -defaultsOSRD
+preplace inst processing_system7_0 -pg 1 -lvl 1 -x 190 -y -140 -defaultsOSRD
+preplace netloc processing_system7_0_DDR 1 1 1 340J -200n
+preplace netloc processing_system7_0_FIXED_IO 1 1 1 340J -170n
+levelinfo -pg 1 0 190 400
+pagesize -pg 1 -db -bbox -sgen 0 -250 510 200
+"
+}
+
