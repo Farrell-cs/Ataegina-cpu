@@ -9,15 +9,43 @@ entity CPU_Top is
         DMEM_WORDS : integer := 1024
     );
     port(
-        clk         : in  std_logic;
-        rst         : in  std_logic;
-        btn         : in  std_logic_vector(2 downto 0) := "000";
-        uart_rx     : in  std_logic := '1';
-        led         : out std_logic_vector(3 downto 0);
-        hdmi_clk_p  : out std_logic;
-        hdmi_clk_n  : out std_logic;
-        hdmi_data_p : out std_logic_vector(2 downto 0);
-        hdmi_data_n : out std_logic_vector(2 downto 0)
+        clk           : in  std_logic;
+        rst           : in  std_logic;
+        btn           : in  std_logic_vector(2 downto 0) := "000";
+        uart_rx       : in  std_logic := '1';
+        led           : out std_logic_vector(3 downto 0);
+        hdmi_clk_p    : out std_logic;
+        hdmi_clk_n    : out std_logic;
+        hdmi_data_p   : out std_logic_vector(2 downto 0);
+        hdmi_data_n   : out std_logic_vector(2 downto 0);
+        -- AXI4 Master port for DDR3 access (0x10000000 - 0x1FFFFFFF)
+        cpu_clk_o     : out std_logic;
+        cpu_rst_o     : out std_logic;
+        m_axi_awaddr  : out std_logic_vector(31 downto 0);
+        m_axi_awlen   : out std_logic_vector(7 downto 0);
+        m_axi_awsize  : out std_logic_vector(2 downto 0);
+        m_axi_awburst : out std_logic_vector(1 downto 0);
+        m_axi_awvalid : out std_logic;
+        m_axi_awready : in  std_logic := '0';
+        m_axi_wdata   : out std_logic_vector(31 downto 0);
+        m_axi_wstrb   : out std_logic_vector(3 downto 0);
+        m_axi_wlast   : out std_logic;
+        m_axi_wvalid  : out std_logic;
+        m_axi_wready  : in  std_logic := '0';
+        m_axi_bresp   : in  std_logic_vector(1 downto 0) := "00";
+        m_axi_bvalid  : in  std_logic := '0';
+        m_axi_bready  : out std_logic;
+        m_axi_araddr  : out std_logic_vector(31 downto 0);
+        m_axi_arlen   : out std_logic_vector(7 downto 0);
+        m_axi_arsize  : out std_logic_vector(2 downto 0);
+        m_axi_arburst : out std_logic_vector(1 downto 0);
+        m_axi_arvalid : out std_logic;
+        m_axi_arready : in  std_logic := '0';
+        m_axi_rdata   : in  std_logic_vector(31 downto 0) := (others => '0');
+        m_axi_rresp   : in  std_logic_vector(1 downto 0) := "00";
+        m_axi_rlast   : in  std_logic := '1';
+        m_axi_rvalid  : in  std_logic := '0';
+        m_axi_rready  : out std_logic
     );
 end entity CPU_Top;
 
@@ -32,6 +60,7 @@ architecture Structural of CPU_Top is
     signal pc_out        : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal pc_plus_4     : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal const_four    : std_logic_vector(WORD_WIDTH - 1 downto 0);
+    signal imem_instr    : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal instruction   : std_logic_vector(WORD_WIDTH - 1 downto 0);
 
     signal opcode        : std_logic_vector(6 downto 0);
@@ -67,6 +96,14 @@ architecture Structural of CPU_Top is
     signal exec_result   : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal is_div_op     : std_logic;
     signal div_stall     : std_logic;
+    signal axi_stall     : std_logic;
+    signal cpu_stall     : std_logic;
+    signal pc_in_ddr     : std_logic;
+    signal dmem_in_ddr   : std_logic;
+    signal axi_ifetch_req: std_logic;
+    signal axi_dmem_req  : std_logic;
+    signal axi_ifetch_data : std_logic_vector(WORD_WIDTH - 1 downto 0);
+    signal axi_dmem_rdata  : std_logic_vector(WORD_WIDTH - 1 downto 0);
     signal zero          : std_logic;
 
     signal jump_base     : std_logic_vector(WORD_WIDTH - 1 downto 0);
@@ -81,6 +118,8 @@ architecture Structural of CPU_Top is
     signal write_data     : std_logic_vector(WORD_WIDTH - 1 downto 0);
 
     signal vram_we       : std_logic;
+    signal ms_prescaler  : integer range 0 to 36874 := 0;
+    signal ms_counter    : unsigned(31 downto 0) := (others => '0');
     signal vram_addr     : std_logic_vector(15 downto 0);
     signal vram_din      : std_logic_vector(7 downto 0);
     signal vram_dout     : std_logic_vector(7 downto 0);
@@ -122,8 +161,11 @@ begin
             imem_wdata    => loader_wdata
         );
 
-    pc_en         <= not div_stall;
-    reg_write_eff <= reg_write and (not div_stall);
+    cpu_clk_o     <= cpu_clk;
+    cpu_rst_o     <= cpu_rst;
+    cpu_stall     <= div_stall or axi_stall;
+    pc_en         <= not cpu_stall;
+    reg_write_eff <= reg_write and (not cpu_stall);
 
     u_pc: entity work.PC
         port map(
@@ -151,8 +193,12 @@ begin
             write_address => loader_addr,
             write_data    => loader_wdata,
             read_address  => pc_out,
-            instruction   => instruction
+            instruction   => imem_instr
         );
+
+    pc_in_ddr      <= '1' when pc_out(31 downto 28) = "0001" else '0';
+    axi_ifetch_req <= pc_in_ddr and (not cpu_rst);
+    instruction    <= axi_ifetch_data when pc_in_ddr = '1' else imem_instr;
 
     opcode     <= instruction(6 downto 0);
     write_reg  <= instruction(11 downto 7);
@@ -277,10 +323,13 @@ begin
             mux_out => pc_in
         );
 
-    dmem_write <= mem_write when alu_result(31) = '0' else '0';
-    dmem_read  <= mem_read  when alu_result(31) = '0' else '0';
+    dmem_in_ddr  <= '1' when alu_result(31 downto 28) = "0001" else '0';
+    axi_dmem_req <= dmem_in_ddr and (mem_read or mem_write) and (not cpu_rst);
 
-    vram_we   <= mem_write when (alu_result(31) = '1' and alu_result(16) = '0' and cpu_rst = '0') else '0';
+    dmem_write <= mem_write when (alu_result(31) = '0' and dmem_in_ddr = '0' and cpu_stall = '0') else '0';
+    dmem_read  <= mem_read  when (alu_result(31) = '0' and dmem_in_ddr = '0') else '0';
+
+    vram_we   <= mem_write when (alu_result(31) = '1' and alu_result(16) = '0' and cpu_rst = '0' and cpu_stall = '0') else '0';
     vram_addr <= alu_result(15 downto 0);
     vram_din  <= read_data_2(7 downto 0);
 
@@ -289,21 +338,77 @@ begin
         if rising_edge(cpu_clk) then
             btn_meta <= btn;
             btn_sync <= btn_meta;
+            if cpu_rst = '1' then
+                ms_prescaler <= 0;
+                ms_counter   <= (others => '0');
+            elsif ms_prescaler = 36874 then
+                ms_prescaler <= 0;
+                ms_counter   <= ms_counter + 1;
+            else
+                ms_prescaler <= ms_prescaler + 1;
+            end if;
         end if;
     end process;
 
-    process(alu_result, dmem_read_data, vram_dout, btn_sync)
+    process(alu_result, dmem_read_data, vram_dout, btn_sync, ms_counter, dmem_in_ddr, axi_dmem_rdata)
     begin
         if alu_result(31) = '1' then
             if alu_result(16) = '1' then
-                read_data <= X"0000000" & '0' & btn_sync;
+                if alu_result(2) = '1' then
+                    read_data <= std_logic_vector(ms_counter);
+                else
+                    read_data <= X"0000000" & '0' & btn_sync;
+                end if;
             else
                 read_data <= X"000000" & vram_dout;
             end if;
+        elsif dmem_in_ddr = '1' then
+            read_data <= axi_dmem_rdata;
         else
             read_data <= dmem_read_data;
         end if;
     end process;
+
+    u_axi_master: entity work.AXI4_Master
+        port map(
+            clk           => cpu_clk,
+            rst           => cpu_rst,
+            ifetch_req    => axi_ifetch_req,
+            ifetch_addr   => pc_out,
+            ifetch_data   => axi_ifetch_data,
+            dmem_req      => axi_dmem_req,
+            dmem_we       => mem_write,
+            dmem_funct3   => funct3,
+            dmem_addr     => alu_result,
+            dmem_wdata    => read_data_2,
+            dmem_rdata    => axi_dmem_rdata,
+            stall         => axi_stall,
+            m_axi_awaddr  => m_axi_awaddr,
+            m_axi_awlen   => m_axi_awlen,
+            m_axi_awsize  => m_axi_awsize,
+            m_axi_awburst => m_axi_awburst,
+            m_axi_awvalid => m_axi_awvalid,
+            m_axi_awready => m_axi_awready,
+            m_axi_wdata   => m_axi_wdata,
+            m_axi_wstrb   => m_axi_wstrb,
+            m_axi_wlast   => m_axi_wlast,
+            m_axi_wvalid  => m_axi_wvalid,
+            m_axi_wready  => m_axi_wready,
+            m_axi_bresp   => m_axi_bresp,
+            m_axi_bvalid  => m_axi_bvalid,
+            m_axi_bready  => m_axi_bready,
+            m_axi_araddr  => m_axi_araddr,
+            m_axi_arlen   => m_axi_arlen,
+            m_axi_arsize  => m_axi_arsize,
+            m_axi_arburst => m_axi_arburst,
+            m_axi_arvalid => m_axi_arvalid,
+            m_axi_arready => m_axi_arready,
+            m_axi_rdata   => m_axi_rdata,
+            m_axi_rresp   => m_axi_rresp,
+            m_axi_rlast   => m_axi_rlast,
+            m_axi_rvalid  => m_axi_rvalid,
+            m_axi_rready  => m_axi_rready
+        );
 
     u_dmem: entity work.Data_Memory
         generic map(

@@ -36,3 +36,13 @@ tools/hdmi_sim/sim_fw/
 *.exe
 __pycache__/
 *.pyc
+
+# ewolf3d & doom shareware assets & generated build files
+firmware/ewolf3d/*.wl1
+firmware/ewolf3d/*.WL1
+firmware/ewolf3d/*.elf
+firmware/ewolf3d/*.bin
+firmware/doom/*.wad
+firmware/doom/*.WAD
+firmware/doom/*.elf
+firmware/doom/*.bin

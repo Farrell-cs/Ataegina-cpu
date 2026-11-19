@@ -3,8 +3,8 @@
 #define VRAM     ((volatile uint8_t*)0x80000000)
 #define BUTTONS  (*(volatile uint32_t*)0x80010000)
 
-#define SCREEN_W 1280
-#define SCREEN_H 720
+#define SCREEN_W 320
+#define SCREEN_H 180
 #define MAX_ITER 200
 
 typedef int32_t fix16_t;

@@ -75,9 +75,9 @@ begin
 
     fb_inst: entity work.Framebuffer_RAM
         generic map (
-            VRAM_WIDTH  => 160,
-            VRAM_HEIGHT => 90,
-            VRAM_SIZE   => 14400
+            VRAM_WIDTH  => 320,
+            VRAM_HEIGHT => 180,
+            VRAM_SIZE   => 57600
         )
         port map (
             clk_cpu        => cpuclk,

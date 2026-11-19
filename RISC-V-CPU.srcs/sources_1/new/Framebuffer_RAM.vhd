@@ -4,9 +4,9 @@ use ieee.numeric_std.all;
 
 entity Framebuffer_RAM is
     generic(
-        VRAM_WIDTH  : integer := 160;
-        VRAM_HEIGHT : integer := 90;
-        VRAM_SIZE   : integer := 14400
+        VRAM_WIDTH  : integer := 320;
+        VRAM_HEIGHT : integer := 180;
+        VRAM_SIZE   : integer := 57600
     );
     port(
         clk_cpu        : in  std_logic;
@@ -29,10 +29,10 @@ end entity Framebuffer_RAM;
 
 architecture rtl of Framebuffer_RAM is
 
-    type vram_array is array (0 to 16383) of std_logic_vector(7 downto 0);
+    type vram_array is array (0 to 65535) of std_logic_vector(7 downto 0);
     signal ram : vram_array := (others => X"00");
 
-    signal read_addr_s1 : unsigned(13 downto 0) := (others => '0');
+    signal read_addr_s1 : unsigned(15 downto 0) := (others => '0');
     signal active_s1    : std_logic := '0';
     signal hsync_s1     : std_logic := '0';
     signal vsync_s1     : std_logic := '0';
@@ -50,10 +50,10 @@ architecture rtl of Framebuffer_RAM is
 begin
 
     process(clk_cpu)
-        variable a_idx : integer range 0 to 16383;
+        variable a_idx : integer range 0 to 65535;
     begin
         if rising_edge(clk_cpu) then
-            a_idx := to_integer(unsigned(cpu_addr(13 downto 0)));
+            a_idx := to_integer(unsigned(cpu_addr(15 downto 0)));
             if cpu_we = '1' then
                 ram(a_idx) <= cpu_din;
             end if;
@@ -62,15 +62,15 @@ begin
     end process;
 
     process(clk_hdmi)
-        variable vx : unsigned(13 downto 0);
-        variable vy : unsigned(13 downto 0);
+        variable vx : unsigned(15 downto 0);
+        variable vy : unsigned(15 downto 0);
     begin
         if rising_edge(clk_hdmi) then
-            vx := resize(unsigned(pixel_x(10 downto 3)), 14);
-            vy := resize(unsigned(pixel_y(9 downto 3)), 14);
+            vx := resize(unsigned(pixel_x(10 downto 2)), 16);
+            vy := resize(unsigned(pixel_y(9 downto 2)), 16);
 
-            -- Stage 1: Compute address (vy * 160 + vx = (vy << 7) + (vy << 5) + vx)
-            read_addr_s1 <= shift_left(vy, 7) + shift_left(vy, 5) + vx;
+            -- Stage 1: Compute address (vy * 320 + vx = (vy << 8) + (vy << 6) + vx)
+            read_addr_s1 <= shift_left(vy, 8) + shift_left(vy, 6) + vx;
             active_s1    <= video_active_i;
             hsync_s1     <= hsync_i;
             vsync_s1     <= vsync_i;

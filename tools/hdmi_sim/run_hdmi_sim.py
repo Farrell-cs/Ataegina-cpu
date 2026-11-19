@@ -35,6 +35,7 @@ RTL_FILES = [
     SRC_DIR / "Imm_Gen.vhd",
     SRC_DIR / "Mux2.vhd",
     SRC_DIR / "Data_Memory.vhd",
+    SRC_DIR / "AXI4_Master.vhd",
     SRC_DIR / "clock_gen.vhd",
     SRC_DIR / "timing_generator.vhd",
     SRC_DIR / "Framebuffer_RAM.vhd",
